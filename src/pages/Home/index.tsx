@@ -1,6 +1,5 @@
 import { Button, Space, SearchBar } from 'antd-mobile';
 import { useCallback, useEffect, useState } from 'react';
-import dayjs from 'dayjs';
 import { history } from 'umi';
 import { getCurrentMenuList } from '@/services/base';
 import DatePicker from './components/DatePicker';
@@ -25,10 +24,11 @@ const PageHome = () => {
   }, [currentMenuType, currentDate]);
 
   const fetchData = () => {
+    const date = currentDate.format('YYYY-MM-DD')
     getCurrentMenuList({
       content: currentSearch,
       menu_type: currentMenuType,
-      date: currentDate.format('YYYY-MM-DD'),
+      date: `${date},${date}`,
     }).then((data) => {
       setDataSource(data.list || []);
     });

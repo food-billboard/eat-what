@@ -1,19 +1,16 @@
 import { Picker } from 'antd-mobile';
 import { useEffect, useState } from 'react';
-import { history } from 'umi'
 import { getCurrentMenuClassifyList } from '@/services/base';
-import { MENU_LABEL_MAP } from '../../../Home/constants'
 import styles from './index.less';
 
 const ClassifyPicker = (props: {
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean
+  menu_type?: string[]
 }) => {
 
-  const {  menu_type } = (history.location.state || {}) as any
-
-  const { value, onChange, disabled=false } = props;
+  const { value, onChange, disabled=false, menu_type='' } = props;
 
   const [dataSource, setDataSource] = useState<
     { label: string; value: string }[]
@@ -25,12 +22,12 @@ const ClassifyPicker = (props: {
       getCurrentMenuClassifyList({
         currPage: 0,
         pageSize: 999,
-        menu_type
+        menu_type: menu_type?.[0] as API_BASE.MenuType || ''
       }).then((data) => {
         setDataSource(
           data.list.map((item: any) => {
             return {
-              label: `${item.title}（${MENU_LABEL_MAP[item.menu_type]}）`,
+              label: item.title,
               value: item._id,
             };
           }),
@@ -38,7 +35,7 @@ const ClassifyPicker = (props: {
       });
     }
     fetchData();
-  }, []);
+  }, [menu_type]);
 
   return (
     <div className={styles['classify-picker']}>

@@ -5,7 +5,6 @@ import { getCurrentMenuList } from '@/services/base';
 import DatePicker from './components/DatePicker';
 import MenuPicker from './components/MenuPicker';
 import Content from './components/Content';
-import { MENU_MAP } from './constants';
 import { getDefaultDate, getDefaultMenuType } from './utils';
 import styles from './index.less';
 
@@ -20,9 +19,9 @@ const PageHome = () => {
   );
 
   const handleEdit = useCallback(
-    (menu_type: string) => {
+    () => {
       history.push('/edit', {
-        menu_type: menu_type || currentMenuType || getDefaultMenuType(),
+        menu_type: currentMenuType || getDefaultMenuType(),
         date: currentDate.format('YYYY-MM-DD'),
       });
     },
@@ -65,21 +64,16 @@ const PageHome = () => {
       </div>
       <div className={styles['home-footer']}>
         <Grid columns={2} gap={8}>
-          {MENU_MAP.map((item) => {
-            const { label, value, status } = item;
-            return (
-              <Grid.Item>
-                <Button
-                  block
-                  onClick={handleEdit.bind(null, value)}
-                  color={status as any}
-                >
-                  新增{label}
-                </Button>
-              </Grid.Item>
-            );
-          })}
-          <Grid.Item span={2}>
+        <Grid.Item>
+          <Button
+            block
+            onClick={handleEdit}
+            color="primary"
+          >
+            新增菜单
+          </Button>
+        </Grid.Item>
+          <Grid.Item>
             <Button disabled block color='primary'>
               随机生成
             </Button>

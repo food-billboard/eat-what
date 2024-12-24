@@ -1,6 +1,7 @@
 import { 
   Picker, 
   Form, 
+  Input,
   TextArea,
   DatePicker,
   Button,
@@ -12,14 +13,15 @@ import { RefObject, useCallback, useEffect, useState } from 'react'
 import { history } from 'umi'
 import dayjs from 'dayjs'
 import type { DatePickerRef } from 'antd-mobile/es/components/date-picker'
+import Editor from '@/components/Editor'
 import {  
   deleteCurrentMenu,
   putCurrentMenu,
   postCurrentMenu,
   getCurrentMenuDetail
 } from '@/services/base'
-import ClassifyPicker from './components/ClassifyPicker'
-import { getDefaultDate } from '../Home/utils'
+import { getDefaultDate, getDefaultMenuType } from '../Home/utils'
+import { MENU_MAP } from '../../pages/Home/constants'
 import styles from './index.less';
 
 const Edit = () => {
@@ -38,12 +40,12 @@ const Edit = () => {
     }else {
       await form.validateFields()
       .then((values) => {
-        const { date } = values 
+        const { date, menu_type } = values 
         return (pageValue ? putCurrentMenu : postCurrentMenu)({
           ...values,
           date: dayjs(date).format('YYYY-MM-DD'),
-          _id: pageValue || '',
-          menu_type
+          menu_type: menu_type?.[0] || 'BREAKFAST',
+          _id: pageValue || ''
         })
       })
       .then(() => {
@@ -93,6 +95,7 @@ const Edit = () => {
         form.setFieldsValue({
           ...data,
           date: getDefaultDate().toDate(),
+          menu_type: [getDefaultMenuType()]
         })
         setPageValue(pageType === 'copy' ? '' : data._id)
       })
@@ -101,6 +104,7 @@ const Edit = () => {
     // 新增
     if(!pageValue) {
       form.setFieldsValue({
+        menu_type: [menu_type || 'BREAKFAST'], 
         date: date ? dayjs(date).toDate() : dayjs().toDate()
       })
       return 
@@ -138,6 +142,9 @@ const Edit = () => {
           </Space>
         }
       >
+        <Form.Item label="标题" name="title" rules={[{ required: true }]}>
+          <Input readOnly={!editable} placeholder="请输入标题" clearable />
+        </Form.Item>
         <Form.Item label="描述" name="description">
           <TextArea readOnly={!editable} placeholder="请输入描述" />
         </Form.Item>
@@ -158,11 +165,30 @@ const Edit = () => {
           </DatePicker>
         </Form.Item>
         <Form.Item
-          name='classify'
+          name='menu_type'
           label='餐别类型'
+          trigger='onConfirm'
+          onClick={(e, pickerRef: RefObject<DatePickerRef>) => {
+            if(editable) pickerRef.current?.open()
+          }}
           rules={[{ required: true }]}
+          initialValue={[getDefaultMenuType()]}
         >
-          <ClassifyPicker disabled={!editable} />
+          <Picker columns={[MENU_MAP]}>
+            {value => value?.[0]?.label}
+          </Picker>
+        </Form.Item>
+        <Form.Item
+          name='content'
+          label='内容'
+          initialValue={''}
+        >
+          <Editor 
+            defaultConfig={{
+              placeholder: '请输入内容'
+            }}
+            disabled={!editable}
+          />
         </Form.Item>
       </Form>
     </div>

@@ -50,29 +50,55 @@ declare namespace Upload {
 
 declare namespace API_BASE {
 
-  export type MenuType = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'NIGHT_SNACK'
+  export type MenuType = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'NIGHT_SNACK';
 
-  export type GetMenuListParams = Partial<{
-    content: string 
-    date: string 
-    menu_type: MenuType
-  }>
+  export type GetEatMenuListParams = Partial<{
+    content: string;
+    date: string;
+    menu_type: MenuType;
+    currPage: number;
+    pageSize: number;
+  }>;
 
-  export type GetMenuListData = {
-    title: string 
-    description: string 
-    content: string 
-    date: string 
-    menu_type: MenuType
-    createdAt: string 
-    updateAt: string 
-    _id: string 
-  }
+  export type GetEatMenuListData = {
+    title: string;
+    description: string;
+    classify: string 
+    classify_description: string 
+    content: string;
+    date: string;
+    menu_type: MenuType;
+    createdAt: string;
+    updateAt: string;
+    _id: string;
+  };
 
-  export type PostMenuData = Pick<GetMenuListData, 'title' | 'description' | 'date' | 'content' | 'menu_type'>
+  export type PostEatMenuData = Pick<
+  GetEatMenuListData,
+    'date' | 'description' | 'classify'
+  >;
 
-  export type PutMenuData = PostMenuData & {
-    _id: string 
-  }
+  export type PutEatMenuData = PostEatMenuData & {
+    _id: string;
+  };
+
+  export type GetEatMenuClassifyListParams = Partial<{
+    content: string;
+    date: string;
+    menu_type: MenuType;
+    currPage: number;
+    pageSize: number;
+  }>;
+
+  export type GetEatMenuClassifyListData = {
+    title: string;
+    description: string;
+    content: string;
+    date: string;
+    menu_type: MenuType;
+    createdAt: string;
+    updateAt: string;
+    _id: string;
+  };
 
 }

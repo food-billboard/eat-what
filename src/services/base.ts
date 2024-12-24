@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
 // 获取列表
-export const getCurrentMenuList = (params: API_BASE.GetMenuListParams) => {
-  return request<{ data: API_BASE.GetMenuListData[] }>(
+export const getCurrentMenuList = (params: API_BASE.GetEatMenuClassifyListParams) => {
+  return request<{ data: API_BASE.GetEatMenuListData[] }>(
     '/api/user/eat_what',
     {
       method: 'GET',
@@ -11,7 +11,7 @@ export const getCurrentMenuList = (params: API_BASE.GetMenuListParams) => {
 }
 
 // 新增菜单
-export const postCurrentMenu = (data: API_BASE.PostMenuData) => {
+export const postCurrentMenu = (data: API_BASE.PostEatMenuData) => {
   return request(
     '/api/user/eat_what',
     {
@@ -21,7 +21,7 @@ export const postCurrentMenu = (data: API_BASE.PostMenuData) => {
 }
 
 // 修改菜单
-export const putCurrentMenu = (data: API_BASE.PutMenuData) => {
+export const putCurrentMenu = (data: API_BASE.PutEatMenuData) => {
   return request(
     '/api/user/eat_what',
     {
@@ -42,10 +42,18 @@ export const deleteCurrentMenu = (params: { _id: string }) => {
 
 // 菜单详情
 export const getCurrentMenuDetail = (params: { _id: string }) => {
-  return request<{ data: API_BASE.GetMenuListData }>(
+  return request<{ data: API_BASE.GetEatMenuListData }>(
     '/api/user/eat_what/detail',
     {
       method: 'GET',
       params
     })
 }
+
+// 分类列表
+export const getCurrentMenuClassifyList = (params: API_BASE.GetEatMenuClassifyListParams) => {
+  return request<{ data: API_BASE.GetEatMenuClassifyListData[]; total: number }>('/api/user/eat_what/classify', {
+    method: 'GET',
+    params,
+  });
+};

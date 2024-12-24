@@ -11,7 +11,7 @@ import { MENU_MAP } from '../../constants';
 import styles from './index.less';
 
 const Content = (props: {
-  value: API_BASE.GetMenuListData[];
+  value: API_BASE.GetEatMenuListData[];
   onChange?: () => any;
 }) => {
   const { value } = props;
@@ -24,9 +24,11 @@ const Content = (props: {
     });
   }, []);
 
-  const handleDetail = useCallback((value: string) => {
+  const handleDetail = useCallback((value: API_BASE.GetEatMenuListData) => {
+    const { _id, menu_type } = value 
     history.push('/edit', {
-      value,
+      value: _id,
+      menu_type,
       type: 'detail',
     });
   }, []);
@@ -39,9 +41,9 @@ const Content = (props: {
         {value.map((item) => {
           const { title, description, menu_type, _id, content } = item;
           const targetMenu = MENU_MAP.find((item) => item.value === menu_type);
-          const color = targetMenu?.color || 'default';
+          const color = targetMenu?.status || 'default';
           return (
-            <Swiper.Item key={_id} onClick={handleDetail.bind(null, _id)}>
+            <Swiper.Item key={_id} onClick={handleDetail.bind(null, item)}>
               <div className={styles['content-item']}>
                 <div className={styles['content-title']}>
                   <div>{title}</div>

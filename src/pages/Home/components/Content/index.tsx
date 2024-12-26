@@ -3,10 +3,13 @@ import {
   Swiper, 
   Tag, 
   Button,
-  ErrorBlock
+  ErrorBlock,
+  Modal,
+  Toast
 } from 'antd-mobile';
 import { useCallback } from 'react';
 import { history } from 'umi';
+import { deleteCurrentMenu } from '@/services/base'
 import { MENU_MAP } from '../../constants';
 import styles from './index.less';
 
@@ -14,7 +17,7 @@ const Content = (props: {
   value: API_BASE.GetEatMenuListData[];
   onChange?: () => any;
 }) => {
-  const { value } = props;
+  const { value, onChange } = props;
 
   const handleCopy = useCallback((value: string, e: any) => {
     e.stopPropagation();
@@ -32,6 +35,27 @@ const Content = (props: {
       type: 'detail',
     });
   }, []);
+
+  const handleDelete = useCallback((value: string, e: any) => {
+    e.stopPropagation();
+    Modal.confirm({
+      title: '提示',
+      content: '是否确认删除？',
+      onConfirm() {
+        deleteCurrentMenu({
+          _id: value,
+        }).then(() => {
+          Toast.show({
+            maskClickable: false,
+            content: '删除成功',
+            afterClose() {
+              onChange?.()
+            },
+          });
+        });
+      },
+    });
+  }, [onChange]);
 
   return (
     <div className={styles['content']}>
@@ -61,6 +85,7 @@ const Content = (props: {
                 <div className={styles['content-footer']}>
                   <Space align="end">
                     <Button color='primary' fill="outline" size="mini" onClick={handleCopy.bind(null, _id)}>复制</Button>
+                    <Button color='danger' fill="outline" size="mini" onClick={handleDelete.bind(null, _id)}>删除</Button>
                   </Space>
                 </div>
               </div>

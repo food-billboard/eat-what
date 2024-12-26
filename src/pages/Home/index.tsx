@@ -35,7 +35,25 @@ const PageHome = () => {
       menu_type: currentMenuType,
       date: `${date},${date}`,
     }).then((data) => {
-      setDataSource(data.list || []);
+      const { list } = data
+      const result: {
+        [key: string]: API_BASE.GetEatMenuListData[]
+      } = {
+        BREAKFAST: [],
+        LUNCH: [],
+        DINNER: [],
+        NIGHT_SNACK: []
+      }
+      for(let i = 0; i < list.length; i ++) {
+        const target: any = list[i]
+        result[target.menu_type].push(target)
+      }
+      setDataSource([
+        ...result.BREAKFAST,
+        ...result.LUNCH,
+        ...result.DINNER,
+        ...result.NIGHT_SNACK,
+      ]);
     });
   };
 
@@ -74,7 +92,7 @@ const PageHome = () => {
           </Button>
         </Grid.Item>
           <Grid.Item>
-            <Button disabled block color='primary'>
+            <Button onClick={() => history.push('/random')} block color='primary'>
               随机生成
             </Button>
           </Grid.Item>

@@ -24,7 +24,8 @@ export default defineConfig({
   },
   routes: [
     { path: '/', component: '@/pages/Home/index' },
-    { path: '/edit', component: '@/pages/Edit/index' }
+    { path: '/edit', component: '@/pages/Edit/index' },
+    { path: '/random', component: '@/pages/Random/index' }
   ],
   npmClient: 'yarn',
   scripts: [

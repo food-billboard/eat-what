@@ -11,12 +11,14 @@ export const getCurrentMenuList = (params: API_BASE.GetEatMenuClassifyListParams
 }
 
 // 新增菜单
-export const postCurrentMenu = (data: API_BASE.PostEatMenuData) => {
+export const postCurrentMenu = (data: API_BASE.PostEatMenuData[] | API_BASE.PostEatMenuData) => {
   return request(
     '/api/user/eat_what',
     {
       method: 'POST',
-      data
+      data: {
+        value_list: Array.isArray(data) ? data : [data]
+      }
     })
 }
 
@@ -53,6 +55,14 @@ export const getCurrentMenuDetail = (params: { _id: string }) => {
 // 分类列表
 export const getCurrentMenuClassifyList = (params: API_BASE.GetEatMenuClassifyListParams) => {
   return request<{ data: API_BASE.GetEatMenuClassifyListData[]; total: number }>('/api/user/eat_what/classify', {
+    method: 'GET',
+    params,
+  });
+};
+
+// 随机菜单
+export const getRandomMenu = (params: API_BASE.GetRandomMenuParams) => {
+  return request<{ data: API_BASE.GetRandomMenuData }>('/api/user/eat_what/random', {
     method: 'GET',
     params,
   });

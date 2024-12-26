@@ -1,34 +1,23 @@
-import {
-  Picker,
-  Form,
-  TextArea,
-  DatePicker,
-  Button,
-  Space,
-  Toast,
-  Modal,
-} from 'antd-mobile';
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import { Form, Button, Space, Toast, Modal } from 'antd-mobile';
+import { useCallback, useEffect, useState } from 'react';
 import { history } from 'umi';
 import dayjs from 'dayjs';
-import { useUpdate } from 'ahooks'
-import type { DatePickerRef } from 'antd-mobile/es/components/date-picker';
+import { useUpdate } from 'ahooks';
 import {
   deleteCurrentMenu,
   putCurrentMenu,
   postCurrentMenu,
   getCurrentMenuDetail,
 } from '@/services/base';
-import ClassifyPicker from './components/ClassifyPicker';
-import { getDefaultDate, getDefaultMenuType } from '../Home/utils';
-import { MENU_MAP } from '../Home/constants'
+import FormContent from './components/Form';
+import { getDefaultDate } from '../Home/utils';
 import styles from './index.less';
 
 const Edit = () => {
   const { value, type, menu_type, date } = (history.location.state ||
     {}) as any;
 
-  const update = useUpdate()
+  const update = useUpdate();
 
   const [pageValue, setPageValue] = useState(value || '');
   const [pageType, setPageType] = useState<'detail' | 'copy' | 'edit'>(type);
@@ -43,12 +32,12 @@ const Edit = () => {
       await form
         .validateFields()
         .then((values) => {
-          const { date } = values;
+          const { date, menu_type } = values;
           return (pageValue ? putCurrentMenu : postCurrentMenu)({
             ...values,
             date: dayjs(date).format('YYYY-MM-DD'),
             _id: pageValue || '',
-            menu_type,
+            menu_type: menu_type?.[0] || '',
           });
         })
         .then(() => {
@@ -95,7 +84,7 @@ const Edit = () => {
         form.setFieldsValue({
           ...data,
           date: getDefaultDate().toDate(),
-          menu_type: [data.menu_type]
+          menu_type: [data.menu_type],
         });
         setPageValue(pageType === 'copy' ? '' : data._id);
       });
@@ -116,74 +105,43 @@ const Edit = () => {
 
   return (
     <div className={styles['edit']}>
-      <Form
-        form={form}
-        onFinish={onFinish}
-        onValuesChange={changeValues => {
-          if(changeValues.menu_type) {
-            form.setFieldsValue({
-              classify: undefined
-            })
-            update()
-          }
-        }}
-        footer={
-          <Space block align="center" className={styles['edit-footer']}>
-            {!!pageValue && (
-              <Button block color="primary" fill="outline" onClick={handleCopy}>
-                复制
-              </Button>
-            )}
-            <Button type="submit" block color="primary">
-              {editable ? '保存' : '编辑'}
-            </Button>
-            {!!pageValue && (
-              <Button block color="danger" onClick={handleDelete}>
-                删除
-              </Button>
-            )}
-          </Space>
-        }
-      >
-        <Form.Item
-          name="menu_type"
-          label="餐别类型"
-          trigger="onConfirm"
-          onClick={(e, pickerRef: RefObject<DatePickerRef>) => {
-            if (editable) pickerRef.current?.open();
-          }}
-          rules={[{ required: true }]}
-          initialValue={[getDefaultMenuType()]}
-        >
-          <Picker columns={[MENU_MAP]}>{(value) => value?.[0]?.label}</Picker>
-        </Form.Item>
-        <Form.Item label="描述" name="description">
-          <TextArea readOnly={!editable} placeholder="请输入描述" />
-        </Form.Item>
-        <Form.Item
-          name="date"
-          label="餐别时间"
-          trigger="onConfirm"
-          onClick={(e, datePickerRef: RefObject<DatePickerRef>) => {
-            if (editable) datePickerRef.current?.open();
-          }}
-          rules={[{ required: true }]}
-          initialValue={getDefaultDate().toDate()}
-        >
-          <DatePicker>
-            {(value) =>
-              value ? dayjs(value).format('YYYY-MM-DD') : '请选择餐别时间'
+      <FormContent
+        editable={editable}
+        formProps={{
+          onValuesChange: (changeValues) => {
+            if (changeValues.menu_type) {
+              form.setFieldsValue({
+                classify: undefined,
+              });
+              update();
             }
-          </DatePicker>
-        </Form.Item>
-        <Form.Item
-          name="classify"
-          label="菜单"
-          rules={[{ required: true }]}
-        >
-          <ClassifyPicker disabled={!editable} menu_type={form.getFieldValue('menu_type')} />
-        </Form.Item>
-      </Form>
+          },
+          onFinish,
+          form,
+          footer: (
+            <Space block align="center" className={styles['edit-footer']}>
+              {!!pageValue && (
+                <Button
+                  block
+                  color="primary"
+                  fill="outline"
+                  onClick={handleCopy}
+                >
+                  复制
+                </Button>
+              )}
+              <Button type="submit" block color="primary">
+                {editable ? '保存' : '编辑'}
+              </Button>
+              {!!pageValue && (
+                <Button block color="danger" onClick={handleDelete}>
+                  删除
+                </Button>
+              )}
+            </Space>
+          ),
+        }}
+      />
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import { Picker } from 'antd-mobile';
-import { useEffect, useState } from 'react';
+import { RightOutline } from 'antd-mobile-icons'
+import { useEffect, useMemo, useState } from 'react';
 import { getCurrentMenuClassifyList } from '@/services/base';
+import RichEditor from '@/components/Editor';
 import styles from './index.less';
 
 const ClassifyPicker = (props: {
@@ -13,9 +15,13 @@ const ClassifyPicker = (props: {
   const { value, onChange, disabled=false, menu_type='' } = props;
 
   const [dataSource, setDataSource] = useState<
-    { label: string; value: string }[]
+    { label: string; value: string, content: string }[]
   >([]);
   const [visible, setVisible] = useState(false);
+
+  const currentContent = useMemo(() => {
+    return dataSource.find(item => item.value === value)?.content || '' 
+  }, [dataSource, value])
 
   useEffect(() => {
     function fetchData() {
@@ -27,6 +33,7 @@ const ClassifyPicker = (props: {
         setDataSource(
           data.list.map((item: any) => {
             return {
+              ...item,
               label: item.title,
               value: item._id,
             };
@@ -52,17 +59,29 @@ const ClassifyPicker = (props: {
       >
         {(value) => {
           return (
-            <div onClick={() => {
-              if(disabled) return 
-              setVisible(true)
-            }}>
+            <div 
+              onClick={() => {
+                if(disabled) return 
+                setVisible(true)
+              }}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between'
+              }}
+            >
               {value?.[0]?.label || (
                 <span style={{ color: '#ccc' }}>选择菜单</span>
               )}
+              <RightOutline color="var(--adm-color-light)" style={{fontSize: 19}} />
             </div>
           );
         }}
       </Picker>
+      <div className={styles['classify-picker-content']}>
+        <RichEditor value={currentContent} toolbarVisible={false} disabled defaultConfig={{
+          placeholder: '这里显示菜单的内容'
+        }} />
+      </div>
     </div>
   );
 };

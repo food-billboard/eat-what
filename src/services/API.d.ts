@@ -75,7 +75,7 @@ declare namespace API_BASE {
 
   export type PostEatMenuData = Pick<
   GetEatMenuListData,
-    'date' | 'description' | 'classify'
+    'date' | 'description' | 'classify' | 'menu_type'
   >;
 
   export type PutEatMenuData = PostEatMenuData & {
@@ -100,5 +100,20 @@ declare namespace API_BASE {
     updateAt: string;
     _id: string;
   };
+
+  export type GetRandomMenuParams = {
+    breakfast: number 
+    lunch: number 
+    dinner: number 
+    night_snack: number 
+    ignore?: string 
+  }
+
+  export type GetRandomMenuData = {
+    breakfast: GetEatMenuClassifyListData[]
+    lunch: numGetEatMenuClassifyListData[]
+    dinner: GetEatMenuClassifyListData[] 
+    night_snack: GetEatMenuClassifyListData[] 
+  }
 
 }

@@ -1,6 +1,10 @@
 .step-two{
   &-header {
     margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
   }
   &-main {
     &-content {
@@ -15,6 +19,12 @@
     }
   }
   &-footer {
+    width: 100%;
     margin: 1rem 0;
+    :global {
+      .adm-space-item {
+        flex: 1;
+      }
+    }
   }
 }

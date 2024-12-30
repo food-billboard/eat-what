@@ -99,6 +99,7 @@ declare namespace API_BASE {
     createdAt: string;
     updateAt: string;
     _id: string;
+    classify: string 
   };
 
   export type GetRandomMenuParams = {

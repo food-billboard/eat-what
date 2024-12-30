@@ -61,7 +61,7 @@ const Content = (props: {
     <div className={styles['content']}>
       {
         value.length ? (
-          <Swiper slideSize={70} trackOffset={15} loop stuckAtBoundary={false}>
+          <Swiper slideSize={70} trackOffset={15} loop={false} stuckAtBoundary={false}>
         {value.map((item) => {
           const { title, description, menu_type, _id, content } = item;
           const targetMenu = MENU_MAP.find((item) => item.value === menu_type);

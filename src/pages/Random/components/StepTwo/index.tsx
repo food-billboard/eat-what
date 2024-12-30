@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Collapse } from 'antd-mobile';
 import { DeleteOutline } from 'antd-mobile-icons';
 import { useUpdate } from 'ahooks'
+import BackButton from '@/components/BackButton'
 import { postCurrentMenu, getRandomMenu } from '@/services/base';
 import FormItem from '../FormItem';
 import DatePicker from '../../../Home/components/DatePicker';
@@ -117,6 +118,7 @@ const StepTwo = (props: {
         })}
       </div>
       <div className={styles['step-two-footer']}>
+        <BackButton />
         <Button block color="primary" onClick={onFinish}>
           确认
         </Button>

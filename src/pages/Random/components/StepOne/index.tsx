@@ -6,6 +6,7 @@ import {
 } from 'antd-mobile';
 import { useCallback } from 'react';
 import { history } from 'umi';
+import BackButton from '@/components/BackButton'
 import { getRandomMenu } from '@/services/base'
 import styles from './index.less';
 
@@ -41,6 +42,7 @@ const StepOne = (props: {
         onFinish={onFinish}
         footer={
           <Space block align="center" className={styles['edit-footer']}>
+            <BackButton />
             <Button
               onClick={() => history.go(-1)}
               block

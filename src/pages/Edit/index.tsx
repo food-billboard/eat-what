@@ -9,6 +9,7 @@ import {
   postCurrentMenu,
   getCurrentMenuDetail,
 } from '@/services/base';
+import BackButton from '@/components/BackButton'
 import FormContent from './components/Form';
 import { getDefaultDate } from '../Home/utils';
 import styles from './index.less';
@@ -120,6 +121,7 @@ const Edit = () => {
           form,
           footer: (
             <Space block align="center" className={styles['edit-footer']}>
+              <BackButton />
               {!!pageValue && (
                 <Button
                   block

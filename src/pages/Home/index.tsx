@@ -1,6 +1,8 @@
-import { Button, Space, SearchBar, Grid } from 'antd-mobile';
+import { Button, Space, Grid } from 'antd-mobile';
 import { useCallback, useEffect, useState } from 'react';
 import { history } from 'umi';
+import dayjs from 'dayjs';
+import { useSetState } from 'ahooks'
 import { getCurrentMenuList } from '@/services/base';
 import DatePicker from './components/DatePicker';
 import MenuPicker from './components/MenuPicker';
@@ -8,15 +10,35 @@ import Content from './components/Content';
 import { getDefaultDate, getDefaultMenuType } from './utils';
 import styles from './index.less';
 
+type GlobalValue = {
+  currentDate: dayjs.Dayjs
+  currentSearch: string,
+  currentMenuType: API_BASE.MenuType
+}
+
+const GLOBAL_SEARCH_PARAMS: GlobalValue = {
+  currentDate: getDefaultDate(),
+  currentSearch: '',
+  currentMenuType: getDefaultMenuType()
+}
+
 const PageHome = () => {
-  const [currentDate, setCurrentDate] = useState(getDefaultDate);
-  const [currentSearch, setCurrentSearch] = useState('');
-  const [currentMenuType, setCurrentMenuType] =
-    useState<API_BASE.MenuType>(getDefaultMenuType);
+  const [ state, _setState ] = useSetState<typeof GLOBAL_SEARCH_PARAMS>({...GLOBAL_SEARCH_PARAMS})
+
+  const {  
+    currentDate,
+    currentSearch,
+    currentMenuType
+  } = state
 
   const [dataSource, setDataSource] = useState<API_BASE.GetEatMenuListData[]>(
     [],
   );
+
+  function setState<T extends keyof GlobalValue>(key: T, value: GlobalValue[T]) {
+    GLOBAL_SEARCH_PARAMS[key] = value 
+    _setState({...GLOBAL_SEARCH_PARAMS})
+  }
 
   const handleEdit = useCallback(
     () => {
@@ -66,8 +88,8 @@ const PageHome = () => {
       <div className={styles['home-title']}>今天吃什么</div>
       <div className={styles['home-sub-title']}>
         <Space align="center">
-          <DatePicker value={currentDate} onChange={setCurrentDate} />
-          <MenuPicker value={currentMenuType} onChange={setCurrentMenuType} />
+          <DatePicker value={currentDate} onChange={setState.bind(null, 'currentDate')} />
+          <MenuPicker value={currentMenuType} onChange={setState.bind(null, 'currentMenuType')} />
         </Space>
         {/* <div className={styles['home-sub-title-search']}>
           <SearchBar

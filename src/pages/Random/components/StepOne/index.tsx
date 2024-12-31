@@ -2,9 +2,11 @@ import {
   Form,
   Space,
   Button,
-  Input
+  Input,
+  Toast
 } from 'antd-mobile';
-import { useCallback } from 'react';
+import type { ToastHandler } from 'antd-mobile/es/components/toast'
+import { useCallback, useRef } from 'react';
 import { history } from 'umi';
 import { getRandomMenu } from '@/services/base'
 import styles from './index.less';
@@ -13,8 +15,10 @@ const INITIAL_MENU_COUNT: {
   [key: string]: number
 } = {
   breakfast: 1,
-  lunch: 2,
-  dinner: 3,
+  lunch_meat: 1,
+  lunch_vegetable: 1,
+  dinner_meat: 1,
+  dinner_vegetable: 2,
   night_snack: 1
 }
 
@@ -26,11 +30,36 @@ const StepOne = (props: {
 
   const [form] = Form.useForm();
 
-  const onFinish = useCallback(() => {
-    const values = form.getFieldsValue()
-    return getRandomMenu(values)
+  const loading = useRef(false)
+  const handler = useRef<ToastHandler>()
+
+  const onFinish = useCallback(async () => {
+    if(loading.current) return 
+    loading.current = true 
+    handler.current = Toast.show({
+      icon: 'loading',
+      content: '菜单生成中',
+      duration: 0
+    })
+    const { lunch_meat, lunch_vegetable, dinner_meat, dinner_vegetable, ...nextValues } = form.getFieldsValue()
+    return getRandomMenu({
+      ...nextValues,
+      lunch: `${lunch_meat},${lunch_vegetable}`,
+      dinner: `${dinner_meat},${dinner_vegetable}`
+    })
     .then((value: any) => {
       propsOnFinish(value)
+      handler.current?.close()
+    })
+    .catch(() => {
+      handler.current?.close()
+      Toast.show({
+        icon: 'fail',
+        content: '生成失败，请重试~',
+      })
+    })
+    .then(() => {
+      loading.current = true 
     })
   }, [form, propsOnFinish])
 
@@ -63,13 +92,23 @@ const StepOne = (props: {
               placeholder: '请输入菜单数量'
             },
             {
-              name: 'lunch',
-              label: '午餐菜单数量',
+              name: 'lunch_meat',
+              label: '午餐荤菜数量',
               placeholder: '请输入菜单数量'
             },
             {
-              name: 'dinner',
-              label: '晚餐菜单数量',
+              name: 'lunch_vegetable',
+              label: '午餐素菜数量',
+              placeholder: '请输入菜单数量'
+            },
+            {
+              name: 'dinner_meat',
+              label: '晚餐荤菜数量',
+              placeholder: '请输入菜单数量'
+            },
+            {
+              name: 'dinner_vegetable',
+              label: '晚餐素菜数量',
               placeholder: '请输入菜单数量'
             },
             {

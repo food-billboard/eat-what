@@ -104,8 +104,8 @@ declare namespace API_BASE {
 
   export type GetRandomMenuParams = {
     breakfast: number 
-    lunch: number 
-    dinner: number 
+    lunch: `${number},${number}` 
+    dinner: `${number},${number}`  
     night_snack: number 
     ignore?: string 
   }

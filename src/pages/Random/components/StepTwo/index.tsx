@@ -48,12 +48,13 @@ const StepTwo = (props: {
   }, [value, date, propsOnFinish]);
 
   const handleAdd = useCallback((type: string, ignoreMenu: string) => {
+    const random = Math.random()
     getRandomMenu({
       breakfast: 0,
-      lunch: 0,
-      dinner: 0,
+      lunch: '0,0',
+      dinner: '0,0',
       night_snack: 0,
-      [type]: 1,
+      [type]: ['lunch', 'dinner'].includes(type) ? `${random > 0.5 ? 1 : 0},${random > 0.5 ? 0 : 1}` : 1,
       ignore: ignoreMenu,
     }).then((value: any) => {
       const target = value[type];
